@@ -20,6 +20,7 @@ import {
 } from '../types/CoveyTownSocket';
 import ConversationArea from './ConversationArea';
 import Town from './Town';
+import Emote from './Emote';
 
 const mockTwilioVideo = mockDeep<TwilioVideo>();
 jest.spyOn(TwilioVideo, 'getInstance').mockReturnValue(mockTwilioVideo);
@@ -27,6 +28,11 @@ jest.spyOn(TwilioVideo, 'getInstance').mockReturnValue(mockTwilioVideo);
 type TestMapDict = {
   [key in string]: ITiledMap;
 };
+
+const exampleEmote1: Emote = new Emote(nanoid(), 10, nanoid());
+const exampleEmote2: Emote = new Emote(nanoid(), 20, nanoid());
+const exampleEmote3: Emote = new Emote(nanoid(), 30, nanoid());
+
 const testingMaps: TestMapDict = {
   twoConv: {
     tiledversion: '1.9.0',
@@ -908,6 +914,76 @@ describe('Town', () => {
       expect(townEmitter.emit).toBeCalledWith('townSettingsUpdated', {
         isPubliclyListed: expected,
       });
+    });
+  });
+
+  describe('Adding new emote', () => {
+    it('Single emote is correctly added to the list of emotes', async () => {
+      town.addEmote(exampleEmote1);
+      expectArraysToContainSameMembers(town.emotes, [exampleEmote1]);
+    });
+
+    it('Multiple emotes are correctly added to the list of emotes', async () => {
+      town.addEmote(exampleEmote1);
+      town.addEmote(exampleEmote2);
+      town.addEmote(exampleEmote3);
+      expectArraysToContainSameMembers(town.emotes, [exampleEmote1, exampleEmote2, exampleEmote3]);
+    });
+  });
+
+  describe('Removing an emote', () => {
+    it('Single emote is correctly removed from the list of emotes', async () => {
+      const playerID1 : string = exampleEmote1.playerID;
+      expectArraysToContainSameMembers(town.emotes, []);
+      town.addEmote(exampleEmote1);
+      expectArraysToContainSameMembers(town.emotes, [exampleEmote1]);
+      town.removeEmote(playerID1);
+      expectArraysToContainSameMembers(town.emotes, [])
+    });
+
+    it('Multiple emotes are removed correctly from the list of emotes', async () => {
+      const playerID1 : string = exampleEmote1.playerID;
+      const playerID2 : string = exampleEmote2.playerID;
+      const playerID3 : string = exampleEmote3.playerID;
+      expectArraysToContainSameMembers(town.emotes, []);
+      town.addEmote(exampleEmote1);
+      town.addEmote(exampleEmote2);
+      town.addEmote(exampleEmote3);
+      expectArraysToContainSameMembers(town.emotes, [exampleEmote1, exampleEmote2, exampleEmote3]);
+      town.removeEmote(playerID1);
+      town.removeEmote(playerID2);
+      town.removeEmote(playerID3);
+      expectArraysToContainSameMembers(town.emotes, [])
+    });
+
+    it('Error when removing an emote from non-existant player', async () => {
+      const bad_id : string = "bad id";
+      expectArraysToContainSameMembers(town.emotes, []);
+      town.addEmote(exampleEmote1);
+      expectArraysToContainSameMembers(town.emotes, [exampleEmote1]);
+      expect(() =>
+        town.removeEmote(bad_id),
+      ).toThrowError();
+    });
+  });
+
+  describe('Removing all emotes', () => {
+    it('Single emote is correctly removed from the list of emotes', async () => {
+      expectArraysToContainSameMembers(town.emotes, []);
+      town.addEmote(exampleEmote1);
+      expectArraysToContainSameMembers(town.emotes, [exampleEmote1]);
+      town.removeAllEmotes();
+      expectArraysToContainSameMembers(town.emotes, [])
+    });
+
+    it('Multiple emotes are removed correctly from the list of emotes', async () => {
+      expectArraysToContainSameMembers(town.emotes, []);
+      town.addEmote(exampleEmote1);
+      town.addEmote(exampleEmote2);
+      town.addEmote(exampleEmote3);
+      expectArraysToContainSameMembers(town.emotes, [exampleEmote1, exampleEmote2, exampleEmote3]);
+      town.removeAllEmotes();
+      expectArraysToContainSameMembers(town.emotes, [])
     });
   });
 });

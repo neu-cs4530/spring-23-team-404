@@ -484,10 +484,10 @@ export default class Town {
   /**
    * Removes the emote from the list of emotes so that the player has no emote 
    *
-   * @param emote the emote to be removed from the list of currently in use emotes 
+   * @param playerID the player id of the emote to be removed from the list
    * @throws Error if the player is not currently emoting and there is not emote to remove 
    */
-   public removeEmote(emote: Emote) {
+   public removeEmote(playerID: string) {
 
   }
 
