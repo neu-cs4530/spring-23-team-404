@@ -21,6 +21,7 @@ import InteractableArea from './InteractableArea';
 import ViewingArea from './ViewingArea';
 import PosterSessionArea from './PosterSessionArea';
 
+
 /**
  * The Town class implements the logic for each town: managing the various events that
  * can occur (e.g. joining a town, moving, leaving a town)
