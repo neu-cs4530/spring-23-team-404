@@ -20,6 +20,7 @@ import ConversationArea from './ConversationArea';
 import InteractableArea from './InteractableArea';
 import ViewingArea from './ViewingArea';
 import PosterSessionArea from './PosterSessionArea';
+import Emote from './Emote';
 
 
 /**
@@ -69,6 +70,14 @@ export default class Town {
     return this._interactables;
   }
 
+  get emotes(): Emote[] {
+    return this._emotes;
+  }
+
+  set emotes(emotes: Emote[]) {
+    this._emotes = emotes;
+  }
+
   /** The list of players currently in the town * */
   private _players: Player[] = [];
 
@@ -90,6 +99,7 @@ export default class Town {
   private _broadcastEmitter: BroadcastOperator<ServerToClientEvents, SocketData>;
 
   private _connectedSockets: Set<CoveyTownSocket> = new Set();
+  private _emotes: Emote[] = [];
 
   constructor(
     friendlyName: string,
@@ -450,5 +460,50 @@ export default class Town {
         }
       }
     }
+  }
+
+  /**
+   * Returns the current emote associated with the player passed 
+   *
+   * @param playerID the players whose emote is being received 
+   * @throws Error if there is no player present with ID
+   */
+  public getEmote(playerID: number): Emote {
+
+  }
+
+  /**
+   * Adds the emote to the list of emotes and replaces an emote if the player is already emoting 
+   *
+   * @param emote the emote to be added to the list of currently in use emotes 
+   */
+   public addEmote(emote: Emote) {
+
+  }
+
+  /**
+   * Removes the emote from the list of emotes so that the player has no emote 
+   *
+   * @param emote the emote to be removed from the list of currently in use emotes 
+   * @throws Error if the player is not currently emoting and there is not emote to remove 
+   */
+   public removeEmote(emote: Emote) {
+
+  }
+
+  /**
+   * Removes all emotes, sets list of emotes to empty, no players currently emoting
+   *
+   */
+   public removeAllEmotes() {
+
+  }
+
+  /**
+   * Gets current time
+   *
+   */
+   public getTime(): number {
+
   }
 }
