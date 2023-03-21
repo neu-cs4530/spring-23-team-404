@@ -146,6 +146,13 @@ export default class Town {
       this._updatePlayerLocation(newPlayer, movementData);
     });
 
+    // Register an event listener for the client socket: if the client updates their
+    // emote, inform the CoveyTownController
+    socket.on('playerEmote', (newEmote: number | undefined) => {
+      newPlayer.emoteID = newEmote;
+      // this._connectedSockets.forEach(s => s.emit('playerEmoted', newPlayer));
+    });
+
     // Set up a listener to process updates to interactables.
     // Currently only knows how to process updates for ViewingAreas and PosterSessionAreas, and
     // ignores any other updates for any other kind of interactable.

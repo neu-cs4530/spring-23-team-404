@@ -8,6 +8,9 @@ export default class Player {
   /** The current location of this user in the world map * */
   public location: PlayerLocation;
 
+  /** The ID of the player's currently displayed emote */
+  public emoteID: number | undefined;
+
   /** The unique identifier for this player * */
   private readonly _id: string;
 
@@ -30,6 +33,7 @@ export default class Player {
       moving: false,
       rotation: 'front',
     };
+    this.emoteID = undefined;
     this._userName = userName;
     this._id = nanoid();
     this._sessionToken = nanoid();
@@ -61,6 +65,7 @@ export default class Player {
       id: this._id,
       location: this.location,
       userName: this._userName,
+      emoteID: this.emoteID,
     };
   }
 }

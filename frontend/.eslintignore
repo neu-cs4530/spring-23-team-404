@@ -1,4 +1,5 @@
 src/components/VideoCall/VideoFrontend
 src/classes/DebugLogger.ts
+src/generated/
 build
 public/virtualbackground

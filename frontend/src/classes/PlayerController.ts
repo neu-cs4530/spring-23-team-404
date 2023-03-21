@@ -8,11 +8,14 @@ export type PlayerEvents = {
 
 export type PlayerGameObjects = {
   sprite: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
+  emote: Phaser.GameObjects.Sprite | undefined;
   label: Phaser.GameObjects.Text;
   locationManagedByGameScene: boolean /* For the local player, the game scene will calculate the current location, and we should NOT apply updates when we receive events */;
 };
 export default class PlayerController extends (EventEmitter as new () => TypedEmitter<PlayerEvents>) {
   private _location: PlayerLocation;
+
+  private _emoteID?: number;
 
   private readonly _id: string;
 
@@ -20,11 +23,12 @@ export default class PlayerController extends (EventEmitter as new () => TypedEm
 
   public gameObjects?: PlayerGameObjects;
 
-  constructor(id: string, userName: string, location: PlayerLocation) {
+  constructor(id: string, userName: string, location: PlayerLocation, emoteID: number | undefined) {
     super();
     this._id = id;
     this._userName = userName;
     this._location = location;
+    this._emoteID = emoteID;
   }
 
   set location(newLocation: PlayerLocation) {
@@ -37,6 +41,14 @@ export default class PlayerController extends (EventEmitter as new () => TypedEm
     return this._location;
   }
 
+  set emoteID(newEmote: number | undefined) {
+    this._emoteID = newEmote;
+  }
+
+  get emoteID(): number | undefined {
+    return this._emoteID;
+  }
+
   get userName(): string {
     return this._userName;
   }
@@ -46,12 +58,17 @@ export default class PlayerController extends (EventEmitter as new () => TypedEm
   }
 
   toPlayerModel(): PlayerModel {
-    return { id: this.id, userName: this.userName, location: this.location };
+    return {
+      id: this.id,
+      userName: this.userName,
+      location: this.location,
+      emoteID: this._emoteID,
+    };
   }
 
   private _updateGameComponentLocation() {
     if (this.gameObjects && !this.gameObjects.locationManagedByGameScene) {
-      const { sprite, label } = this.gameObjects;
+      const { sprite, label, emote } = this.gameObjects;
       if (!sprite.anims) return;
       sprite.setX(this.location.x);
       sprite.setY(this.location.y);
@@ -63,10 +80,19 @@ export default class PlayerController extends (EventEmitter as new () => TypedEm
         sprite.anims.stop();
         sprite.setTexture('atlas', `misa-${this.location.rotation}`);
       }
+      if (emote) {
+        emote.setX(this.location.x + 20);
+        emote.setY(this.location.y - 40);
+      }
     }
   }
 
   static fromPlayerModel(modelPlayer: PlayerModel): PlayerController {
-    return new PlayerController(modelPlayer.id, modelPlayer.userName, modelPlayer.location);
+    return new PlayerController(
+      modelPlayer.id,
+      modelPlayer.userName,
+      modelPlayer.location,
+      modelPlayer.emoteID,
+    );
   }
 }

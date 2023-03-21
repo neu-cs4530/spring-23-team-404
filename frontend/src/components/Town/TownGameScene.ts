@@ -28,6 +28,17 @@ function interactableTypeForObjectType(type: string): any {
 // Original inspiration and code from:
 // https://medium.com/@michaelwesthadley/modular-game-worlds-in-phaser-3-tilemaps-1-958fc7e6bbd6
 
+type NumberKeys = {
+  1: Phaser.Input.Keyboard.Key;
+  2: Phaser.Input.Keyboard.Key;
+  3: Phaser.Input.Keyboard.Key;
+  4: Phaser.Input.Keyboard.Key;
+  5: Phaser.Input.Keyboard.Key;
+  6: Phaser.Input.Keyboard.Key;
+  7: Phaser.Input.Keyboard.Key;
+  8: Phaser.Input.Keyboard.Key;
+};
+
 export default class TownGameScene extends Phaser.Scene {
   private _pendingOverlapExits = new Map<Interactable, () => void>();
 
@@ -41,6 +52,8 @@ export default class TownGameScene extends Phaser.Scene {
 
   private _cursors: Phaser.Types.Input.Keyboard.CursorKeys[] = [];
 
+  private _numberKeys: NumberKeys[] = [];
+
   private _cursorKeys?: Phaser.Types.Input.Keyboard.CursorKeys;
 
   /*
@@ -51,6 +64,8 @@ export default class TownGameScene extends Phaser.Scene {
   private _previouslyCapturedKeys: number[] = [];
 
   private _lastLocation?: PlayerLocation;
+
+  private _lastEmote?: string;
 
   private _ready = false;
 
@@ -122,6 +137,14 @@ export default class TownGameScene extends Phaser.Scene {
       '16_Grocery_store_32x32',
       this._resourcePathPrefix + '/assets/tilesets/16_Grocery_store_32x32.png',
     );
+    this.load.image('emote1', this._resourcePathPrefix + '/assets/emotes/emote1.png');
+    this.load.image('emote2', this._resourcePathPrefix + '/assets/emotes/emote2.png');
+    this.load.image('emote3', this._resourcePathPrefix + '/assets/emotes/emote3.png');
+    this.load.image('emote4', this._resourcePathPrefix + '/assets/emotes/emote4.png');
+    this.load.image('emote5', this._resourcePathPrefix + '/assets/emotes/emote5.png');
+    this.load.image('emote6', this._resourcePathPrefix + '/assets/emotes/emote6.png');
+    this.load.image('emote7', this._resourcePathPrefix + '/assets/emotes/emote7.png');
+    this.load.image('emote8', this._resourcePathPrefix + '/assets/emotes/emote8.png');
     this.load.tilemapTiledJSON('map', this._resourcePathPrefix + '/assets/tilemaps/indoors.json');
     this.load.atlas(
       'atlas',
@@ -141,15 +164,43 @@ export default class TownGameScene extends Phaser.Scene {
 
     disconnectedPlayers.forEach(disconnectedPlayer => {
       if (disconnectedPlayer.gameObjects) {
-        const { sprite, label } = disconnectedPlayer.gameObjects;
+        const { sprite, label, emote } = disconnectedPlayer.gameObjects;
         if (sprite && label) {
           sprite.destroy();
           label.destroy();
+        }
+        if (emote) {
+          emote.destroy();
         }
       }
     });
     // Remove disconnected players from list
     this._players = players;
+  }
+
+  updateEmote(emotedPlayer: PlayerController) {
+    this.createPlayerSprites(emotedPlayer);
+    if (emotedPlayer.gameObjects) {
+      const { sprite, label, emote } = emotedPlayer.gameObjects;
+      if (emote) {
+        emote.destroy();
+      }
+      let newEmote = undefined;
+      if (emotedPlayer.emoteID) {
+        const playerLocation = emotedPlayer.location;
+        newEmote = this.add
+          .sprite(playerLocation.x, playerLocation.y - 40, `emote${emotedPlayer.emoteID}`)
+          .setSize(30, 40)
+          .setScale(2, 2)
+          .setDepth(15);
+      }
+      emotedPlayer.gameObjects = {
+        sprite,
+        label,
+        emote: newEmote,
+        locationManagedByGameScene: false,
+      };
+    }
   }
 
   getNewMovementDirection() {
@@ -164,6 +215,34 @@ export default class TownGameScene extends Phaser.Scene {
     }
     if (this._cursors.find(keySet => keySet.up?.isDown)) {
       return 'back';
+    }
+    return undefined;
+  }
+
+  getNewEmote() {
+    if (this._numberKeys.find(keySet => keySet[1].isDown)) {
+      return '1';
+    }
+    if (this._numberKeys.find(keySet => keySet[2].isDown)) {
+      return '2';
+    }
+    if (this._numberKeys.find(keySet => keySet[3].isDown)) {
+      return '3';
+    }
+    if (this._numberKeys.find(keySet => keySet[4].isDown)) {
+      return '4';
+    }
+    if (this._numberKeys.find(keySet => keySet[5].isDown)) {
+      return '5';
+    }
+    if (this._numberKeys.find(keySet => keySet[6].isDown)) {
+      return '6';
+    }
+    if (this._numberKeys.find(keySet => keySet[7].isDown)) {
+      return '7';
+    }
+    if (this._numberKeys.find(keySet => keySet[8].isDown)) {
+      return '8';
     }
     return undefined;
   }
@@ -198,6 +277,14 @@ export default class TownGameScene extends Phaser.Scene {
       return;
     }
     const gameObjects = this.coveyTownController.ourPlayer.gameObjects;
+    if (gameObjects && this._numberKeys) {
+      const emoteID = this.getNewEmote();
+      if (emoteID !== this._lastEmote) {
+        this._lastEmote = emoteID;
+        console.log(emoteID);
+        this.coveyTownController.emitEmoteChange(emoteID ? parseInt(emoteID) : undefined);
+      }
+    }
     if (gameObjects && this._cursors) {
       const speed = 175;
 
@@ -245,6 +332,10 @@ export default class TownGameScene extends Phaser.Scene {
       const isMoving = primaryDirection !== undefined;
       gameObjects.label.setX(body.x);
       gameObjects.label.setY(body.y - 20);
+      if (gameObjects.emote) {
+        gameObjects.emote.setX(body.x + 20);
+        gameObjects.emote.setY(body.y - 40);
+      }
       const x = gameObjects.sprite.getBounds().centerX;
       const y = gameObjects.sprite.getBounds().centerY;
       //Move the sprite
@@ -386,6 +477,21 @@ export default class TownGameScene extends Phaser.Scene {
         false,
       ) as Phaser.Types.Input.Keyboard.CursorKeys,
     );
+    this._numberKeys.push(
+      this.input.keyboard.addKeys(
+        {
+          1: Phaser.Input.Keyboard.KeyCodes.ONE,
+          2: Phaser.Input.Keyboard.KeyCodes.TWO,
+          3: Phaser.Input.Keyboard.KeyCodes.THREE,
+          4: Phaser.Input.Keyboard.KeyCodes.FOUR,
+          5: Phaser.Input.Keyboard.KeyCodes.FIVE,
+          6: Phaser.Input.Keyboard.KeyCodes.SIX,
+          7: Phaser.Input.Keyboard.KeyCodes.SEVEN,
+          8: Phaser.Input.Keyboard.KeyCodes.EIGHT,
+        },
+        false,
+      ) as NumberKeys,
+    );
 
     // Create a sprite with physics enabled via the physics system. The image used for the sprite
     // has a bit of whitespace, so I'm using setSize & setOffset to control the size of the
@@ -403,9 +509,17 @@ export default class TownGameScene extends Phaser.Scene {
         backgroundColor: '#ffffff',
       })
       .setDepth(6);
+    /*
+    const emote = this.add
+      .sprite(spawnPoint.x, spawnPoint.y - 40, 'emote.000')
+      .setSize(30, 40)
+      .setScale(2, 2)
+      .setDepth(15);
+    */
     this.coveyTownController.ourPlayer.gameObjects = {
       sprite,
       label,
+      emote: undefined,
       locationManagedByGameScene: true,
     };
 
@@ -491,6 +605,9 @@ export default class TownGameScene extends Phaser.Scene {
     this._onGameReadyListeners.forEach(listener => listener());
     this._onGameReadyListeners = [];
     this.coveyTownController.addListener('playersChanged', players => this.updatePlayers(players));
+    this.coveyTownController.addListener('playerEmoted', emotedPlayer =>
+      this.updateEmote(emotedPlayer),
+    );
   }
 
   createPlayerSprites(player: PlayerController) {
@@ -513,6 +630,7 @@ export default class TownGameScene extends Phaser.Scene {
       player.gameObjects = {
         sprite,
         label,
+        emote: undefined,
         locationManagedByGameScene: false,
       };
     }
