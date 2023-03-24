@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 import PlayerController from '../../classes/PlayerController';
 import TownController from '../../classes/TownController';
-import { PlayerLocation } from '../../types/CoveyTownSocket';
+import { PlayerLocation, Emote } from '../../types/CoveyTownSocket';
 import { Callback } from '../VideoCall/VideoFrontend/types';
 import Interactable from './Interactable';
 import ConversationArea from './interactables/ConversationArea';
@@ -65,7 +65,7 @@ export default class TownGameScene extends Phaser.Scene {
 
   private _lastLocation?: PlayerLocation;
 
-  private _lastEmote?: string;
+  private _lastEmote?: Emote;
 
   private _ready = false;
 
@@ -179,7 +179,6 @@ export default class TownGameScene extends Phaser.Scene {
   }
 
   updateEmote(emotedPlayer: PlayerController) {
-    this.createPlayerSprites(emotedPlayer);
     if (emotedPlayer.gameObjects) {
       const { sprite, label, emote } = emotedPlayer.gameObjects;
       if (emote) {
@@ -192,7 +191,7 @@ export default class TownGameScene extends Phaser.Scene {
           .sprite(playerLocation.x + 20, playerLocation.y - 40, `emote${emotedPlayer.emoteID}`)
           .setSize(30, 40)
           .setScale(2, 2)
-          .setDepth(15);
+          .setDepth(5);
       }
       emotedPlayer.gameObjects = {
         sprite,
@@ -221,28 +220,28 @@ export default class TownGameScene extends Phaser.Scene {
 
   getNewEmote() {
     if (this._numberKeys.find(keySet => keySet[1].isDown)) {
-      return '1';
+      return 1;
     }
     if (this._numberKeys.find(keySet => keySet[2].isDown)) {
-      return '2';
+      return 2;
     }
     if (this._numberKeys.find(keySet => keySet[3].isDown)) {
-      return '3';
+      return 3;
     }
     if (this._numberKeys.find(keySet => keySet[4].isDown)) {
-      return '4';
+      return 4;
     }
     if (this._numberKeys.find(keySet => keySet[5].isDown)) {
-      return '5';
+      return 5;
     }
     if (this._numberKeys.find(keySet => keySet[6].isDown)) {
-      return '6';
+      return 6;
     }
     if (this._numberKeys.find(keySet => keySet[7].isDown)) {
-      return '7';
+      return 7;
     }
     if (this._numberKeys.find(keySet => keySet[8].isDown)) {
-      return '8';
+      return 8;
     }
     return undefined;
   }
@@ -278,10 +277,18 @@ export default class TownGameScene extends Phaser.Scene {
     }
     const gameObjects = this.coveyTownController.ourPlayer.gameObjects;
     if (gameObjects && this._numberKeys) {
+      // check if player pressed a new emote
       const emoteID = this.getNewEmote();
-      if (emoteID && emoteID !== this._lastEmote) {
-        this._lastEmote = emoteID;
-        this.coveyTownController.emitEmoteChange(emoteID ? parseInt(emoteID) : undefined);
+      if (emoteID && (!this._lastEmote || emoteID !== this._lastEmote?.id)) {
+        this._lastEmote = { id: emoteID, timeCreated: new Date() };
+        this.coveyTownController.emitEmoteChange(emoteID ? emoteID : undefined);
+      }
+
+      // check if 5 seconds have passed, in which case the old emote expires
+      const now = new Date();
+      if (this._lastEmote && (now.getTime() - this._lastEmote.timeCreated.getTime()) / 1000 >= 5) {
+        this._lastEmote = undefined;
+        this.coveyTownController.emitEmoteChange(undefined);
       }
     }
     if (gameObjects && this._cursors) {

@@ -52,6 +52,11 @@ export type ChatMessage = {
   interactableId?: string;
 };
 
+export type Emote = {
+  id: number;
+  timeCreated: Date;
+}
+
 export interface ConversationArea {
   id: string;
   topic?: string;
