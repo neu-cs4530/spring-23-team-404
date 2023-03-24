@@ -189,7 +189,7 @@ export default class TownGameScene extends Phaser.Scene {
       if (emotedPlayer.emoteID) {
         const playerLocation = emotedPlayer.location;
         newEmote = this.add
-          .sprite(playerLocation.x, playerLocation.y - 40, `emote${emotedPlayer.emoteID}`)
+          .sprite(playerLocation.x + 20, playerLocation.y - 40, `emote${emotedPlayer.emoteID}`)
           .setSize(30, 40)
           .setScale(2, 2)
           .setDepth(15);
@@ -279,9 +279,8 @@ export default class TownGameScene extends Phaser.Scene {
     const gameObjects = this.coveyTownController.ourPlayer.gameObjects;
     if (gameObjects && this._numberKeys) {
       const emoteID = this.getNewEmote();
-      if (emoteID !== this._lastEmote) {
+      if (emoteID && emoteID !== this._lastEmote) {
         this._lastEmote = emoteID;
-        console.log(emoteID);
         this.coveyTownController.emitEmoteChange(emoteID ? parseInt(emoteID) : undefined);
       }
     }
@@ -509,13 +508,6 @@ export default class TownGameScene extends Phaser.Scene {
         backgroundColor: '#ffffff',
       })
       .setDepth(6);
-    /*
-    const emote = this.add
-      .sprite(spawnPoint.x, spawnPoint.y - 40, 'emote.000')
-      .setSize(30, 40)
-      .setScale(2, 2)
-      .setDepth(15);
-    */
     this.coveyTownController.ourPlayer.gameObjects = {
       sprite,
       label,

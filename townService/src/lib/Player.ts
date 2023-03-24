@@ -9,7 +9,7 @@ export default class Player {
   public location: PlayerLocation;
 
   /** The ID of the player's currently displayed emote */
-  public emoteID: number | undefined;
+  public emoteID?: number;
 
   /** The unique identifier for this player * */
   private readonly _id: string;

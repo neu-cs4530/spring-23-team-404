@@ -150,7 +150,7 @@ export default class Town {
     // emote, inform the CoveyTownController
     socket.on('playerEmote', (newEmote: number | undefined) => {
       newPlayer.emoteID = newEmote;
-      // this._connectedSockets.forEach(s => s.emit('playerEmoted', newPlayer));
+      this._broadcastEmitter.emit('playerEmoted', newPlayer.toPlayerModel());
     });
 
     // Set up a listener to process updates to interactables.
