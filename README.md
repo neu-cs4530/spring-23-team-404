@@ -1,18 +1,18 @@
 # Covey.Town
 
-Current Emote Functionality Documentation :
+### Current Emote Functionality Documentation :
 Emote functionality is made possible by key presses from numbers 1 - 8, with each number representing a different emote symbol that lasts for a few seconds before disappearing. 
 
 Updates for this functionality can be seen in the backend in Town.ts where the CoveyTownController is updated whenever a player updates their emote. 
 
 Most logic for emote functionality is in the frontend of CoveyTown, with 
-TownGameScene handling the addition and removal of emotes as well as the time that emotes are displayed. 
-TownController updating the local state to alert whenever a player emotes, as well as alerting townService that a player has emoted 
-PlayerController handling the visual of the emote sprite located above the player sprite on the gameScene. 
-Emote located in town and Town.ts containing emote templates not yet implemented. 
+- TownGameScene handling the addition and removal of emotes as well as the time that emotes are displayed. 
+- TownController updating the local state to alert whenever a player emotes, as well as alerting townService that a player has emoted. 
+- PlayerController handling the visual of the emote sprite located above the player sprite on the gameScene. 
+- Emote located in town and Town.ts containing emote templates not yet implemented. 
 
 
-Covey.Town provides a virtual meeting space where different groups of people can have simultaneous video calls, allowing participants to drift between different conversations, just like in real life.
+### Covey.Town provides a virtual meeting space where different groups of people can have simultaneous video calls, allowing participants to drift between different conversations, just like in real life.
 Covey.Town was built for Northeastern's [Spring 2021 software engineering course](https://neu-se.github.io/CS4530-CS5500-Spring-2021/), and is designed to be reused across semesters.
 You can view our reference deployment of the app at [app.covey.town](https://app.covey.town/), and our project showcase ([Spring 2022](https://neu-se.github.io/CS4530-Spring-2022/assignments/project-showcase), [Spring 2021](https://neu-se.github.io/CS4530-CS5500-Spring-2021/project-showcase)) highlight select student projects.
 
