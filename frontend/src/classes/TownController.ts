@@ -12,6 +12,7 @@ import { TownsService, TownsServiceClient } from '../generated/client';
 import useTownController from '../hooks/useTownController';
 import {
   ChatMessage,
+  Emote,
   CoveyTownSocket,
   PlayerLocation,
   TownSettingsUpdate,
@@ -427,7 +428,7 @@ export default class TownController extends (EventEmitter as new () => TypedEmit
     this._socket.on('playerEmoted', emotedPlayer => {
       const playerToUpdate = this.players.find(eachPlayer => eachPlayer.id === emotedPlayer.id);
       if (playerToUpdate) {
-        playerToUpdate.emoteID = emotedPlayer.emoteID;
+        playerToUpdate.emote = emotedPlayer.emote;
         this.emit('playerEmoted', playerToUpdate);
       } else {
         const newPlayer = PlayerController.fromPlayerModel(emotedPlayer);
@@ -494,11 +495,11 @@ export default class TownController extends (EventEmitter as new () => TypedEmit
    * also notifying the townService that our player emoted.
    * @param newEmote
    */
-  public emitEmoteChange(newEmote: number | undefined) {
+  public emitEmoteChange(newEmote: Emote | undefined) {
     this._socket.emit('playerEmote', newEmote);
     const ourPlayer = this._ourPlayer;
     assert(ourPlayer);
-    ourPlayer.emoteID = newEmote;
+    ourPlayer.emote = newEmote;
     this.emit('playerEmoted', ourPlayer);
   }
 

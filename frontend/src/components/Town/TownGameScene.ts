@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 import PlayerController from '../../classes/PlayerController';
 import TownController from '../../classes/TownController';
-import { PlayerLocation, Emote } from '../../types/CoveyTownSocket';
+import { PlayerLocation } from '../../types/CoveyTownSocket';
 import { Callback } from '../VideoCall/VideoFrontend/types';
 import Interactable from './Interactable';
 import ConversationArea from './interactables/ConversationArea';
@@ -28,17 +28,6 @@ function interactableTypeForObjectType(type: string): any {
 // Original inspiration and code from:
 // https://medium.com/@michaelwesthadley/modular-game-worlds-in-phaser-3-tilemaps-1-958fc7e6bbd6
 
-type NumberKeys = {
-  1: Phaser.Input.Keyboard.Key;
-  2: Phaser.Input.Keyboard.Key;
-  3: Phaser.Input.Keyboard.Key;
-  4: Phaser.Input.Keyboard.Key;
-  5: Phaser.Input.Keyboard.Key;
-  6: Phaser.Input.Keyboard.Key;
-  7: Phaser.Input.Keyboard.Key;
-  8: Phaser.Input.Keyboard.Key;
-};
-
 export default class TownGameScene extends Phaser.Scene {
   private _pendingOverlapExits = new Map<Interactable, () => void>();
 
@@ -52,8 +41,6 @@ export default class TownGameScene extends Phaser.Scene {
 
   private _cursors: Phaser.Types.Input.Keyboard.CursorKeys[] = [];
 
-  private _numberKeys: NumberKeys[] = [];
-
   private _cursorKeys?: Phaser.Types.Input.Keyboard.CursorKeys;
 
   /*
@@ -64,8 +51,6 @@ export default class TownGameScene extends Phaser.Scene {
   private _previouslyCapturedKeys: number[] = [];
 
   private _lastLocation?: PlayerLocation;
-
-  private _lastEmote?: Emote;
 
   private _ready = false;
 
@@ -185,10 +170,10 @@ export default class TownGameScene extends Phaser.Scene {
         emote.destroy();
       }
       let newEmote = undefined;
-      if (emotedPlayer.emoteID) {
+      if (emotedPlayer.emote) {
         const playerLocation = emotedPlayer.location;
         newEmote = this.add
-          .sprite(playerLocation.x + 20, playerLocation.y - 40, `emote${emotedPlayer.emoteID}`)
+          .sprite(playerLocation.x + 20, playerLocation.y - 40, `emote${emotedPlayer.emote.id}`)
           .setSize(30, 40)
           .setScale(2, 2)
           .setDepth(5);
@@ -214,34 +199,6 @@ export default class TownGameScene extends Phaser.Scene {
     }
     if (this._cursors.find(keySet => keySet.up?.isDown)) {
       return 'back';
-    }
-    return undefined;
-  }
-
-  getNewEmote() {
-    if (this._numberKeys.find(keySet => keySet[1].isDown)) {
-      return 1;
-    }
-    if (this._numberKeys.find(keySet => keySet[2].isDown)) {
-      return 2;
-    }
-    if (this._numberKeys.find(keySet => keySet[3].isDown)) {
-      return 3;
-    }
-    if (this._numberKeys.find(keySet => keySet[4].isDown)) {
-      return 4;
-    }
-    if (this._numberKeys.find(keySet => keySet[5].isDown)) {
-      return 5;
-    }
-    if (this._numberKeys.find(keySet => keySet[6].isDown)) {
-      return 6;
-    }
-    if (this._numberKeys.find(keySet => keySet[7].isDown)) {
-      return 7;
-    }
-    if (this._numberKeys.find(keySet => keySet[8].isDown)) {
-      return 8;
     }
     return undefined;
   }
@@ -276,21 +233,14 @@ export default class TownGameScene extends Phaser.Scene {
       return;
     }
     const gameObjects = this.coveyTownController.ourPlayer.gameObjects;
-    if (gameObjects && this._numberKeys) {
-      // check if player pressed a new emote
-      const emoteID = this.getNewEmote();
-      if (emoteID && (!this._lastEmote || emoteID !== this._lastEmote?.id)) {
-        this._lastEmote = { id: emoteID, timeCreated: new Date() };
-        this.coveyTownController.emitEmoteChange(emoteID ? emoteID : undefined);
-      }
+    const ourEmote = this.coveyTownController.ourPlayer.emote;
 
-      // check if 5 seconds have passed, in which case the old emote expires
-      const now = new Date();
-      if (this._lastEmote && (now.getTime() - this._lastEmote.timeCreated.getTime()) / 1000 >= 5) {
-        this._lastEmote = undefined;
-        this.coveyTownController.emitEmoteChange(undefined);
-      }
+    // check if 5 seconds have passed, in which case the old emote expires
+    const now = new Date();
+    if (ourEmote && (now.getTime() - new Date(ourEmote.timeCreated).getTime()) / 1000 >= 5) {
+      this.coveyTownController.emitEmoteChange(undefined);
     }
+
     if (gameObjects && this._cursors) {
       const speed = 175;
 
@@ -482,21 +432,6 @@ export default class TownGameScene extends Phaser.Scene {
         },
         false,
       ) as Phaser.Types.Input.Keyboard.CursorKeys,
-    );
-    this._numberKeys.push(
-      this.input.keyboard.addKeys(
-        {
-          1: Phaser.Input.Keyboard.KeyCodes.ONE,
-          2: Phaser.Input.Keyboard.KeyCodes.TWO,
-          3: Phaser.Input.Keyboard.KeyCodes.THREE,
-          4: Phaser.Input.Keyboard.KeyCodes.FOUR,
-          5: Phaser.Input.Keyboard.KeyCodes.FIVE,
-          6: Phaser.Input.Keyboard.KeyCodes.SIX,
-          7: Phaser.Input.Keyboard.KeyCodes.SEVEN,
-          8: Phaser.Input.Keyboard.KeyCodes.EIGHT,
-        },
-        false,
-      ) as NumberKeys,
     );
 
     // Create a sprite with physics enabled via the physics system. The image used for the sprite

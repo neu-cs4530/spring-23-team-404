@@ -7,6 +7,7 @@ import TwilioVideo from '../lib/TwilioVideo';
 import { isPosterSessionArea, isViewingArea } from '../TestUtils';
 import {
   ChatMessage,
+  Emote,
   ConversationArea as ConversationAreaModel,
   CoveyTownSocket,
   Interactable,
@@ -148,8 +149,8 @@ export default class Town {
 
     // Register an event listener for the client socket: if the client updates their
     // emote, inform the CoveyTownController
-    socket.on('playerEmote', (newEmote: number | undefined) => {
-      newPlayer.emoteID = newEmote;
+    socket.on('playerEmote', (newEmote: Emote | undefined) => {
+      newPlayer.emote = newEmote;
       this._broadcastEmitter.emit('playerEmoted', newPlayer.toPlayerModel());
     });
 

@@ -1,5 +1,10 @@
 import { nanoid } from 'nanoid';
-import { Player as PlayerModel, PlayerLocation, TownEmitter } from '../types/CoveyTownSocket';
+import {
+  Player as PlayerModel,
+  PlayerLocation,
+  TownEmitter,
+  Emote,
+} from '../types/CoveyTownSocket';
 
 /**
  * Each user who is connected to a town is represented by a Player object
@@ -9,7 +14,7 @@ export default class Player {
   public location: PlayerLocation;
 
   /** The ID of the player's currently displayed emote */
-  public emoteID?: number;
+  public emote?: Emote;
 
   /** The unique identifier for this player * */
   private readonly _id: string;
@@ -33,7 +38,7 @@ export default class Player {
       moving: false,
       rotation: 'front',
     };
-    this.emoteID = undefined;
+    this.emote = undefined;
     this._userName = userName;
     this._id = nanoid();
     this._sessionToken = nanoid();
@@ -65,7 +70,7 @@ export default class Player {
       id: this._id,
       location: this.location,
       userName: this._userName,
-      emoteID: this.emoteID,
+      emote: this.emote,
     };
   }
 }

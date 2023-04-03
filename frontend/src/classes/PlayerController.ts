@@ -1,6 +1,6 @@
 import EventEmitter from 'events';
 import TypedEmitter from 'typed-emitter';
-import { Player as PlayerModel, PlayerLocation } from '../types/CoveyTownSocket';
+import { Player as PlayerModel, PlayerLocation, Emote } from '../types/CoveyTownSocket';
 
 export type PlayerEvents = {
   movement: (newLocation: PlayerLocation) => void;
@@ -15,7 +15,7 @@ export type PlayerGameObjects = {
 export default class PlayerController extends (EventEmitter as new () => TypedEmitter<PlayerEvents>) {
   private _location: PlayerLocation;
 
-  private _emoteID?: number;
+  private _emote?: Emote;
 
   private readonly _id: string;
 
@@ -23,12 +23,12 @@ export default class PlayerController extends (EventEmitter as new () => TypedEm
 
   public gameObjects?: PlayerGameObjects;
 
-  constructor(id: string, userName: string, location: PlayerLocation, emoteID: number | undefined) {
+  constructor(id: string, userName: string, location: PlayerLocation, emote: Emote | undefined) {
     super();
     this._id = id;
     this._userName = userName;
     this._location = location;
-    this._emoteID = emoteID;
+    this._emote = emote;
   }
 
   set location(newLocation: PlayerLocation) {
@@ -41,12 +41,12 @@ export default class PlayerController extends (EventEmitter as new () => TypedEm
     return this._location;
   }
 
-  set emoteID(newEmote: number | undefined) {
-    this._emoteID = newEmote;
+  set emote(newEmote: Emote | undefined) {
+    this._emote = newEmote;
   }
 
-  get emoteID(): number | undefined {
-    return this._emoteID;
+  get emote(): Emote | undefined {
+    return this._emote;
   }
 
   get userName(): string {
@@ -62,7 +62,7 @@ export default class PlayerController extends (EventEmitter as new () => TypedEm
       id: this.id,
       userName: this.userName,
       location: this.location,
-      emoteID: this._emoteID,
+      emote: this._emote,
     };
   }
 
@@ -92,7 +92,7 @@ export default class PlayerController extends (EventEmitter as new () => TypedEm
       modelPlayer.id,
       modelPlayer.userName,
       modelPlayer.location,
-      modelPlayer.emoteID,
+      modelPlayer.emote,
     );
   }
 }

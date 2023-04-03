@@ -29,7 +29,7 @@ export interface Player {
   id: string;
   userName: string;
   location: PlayerLocation;
-  emoteID: number | undefined;
+  emote?: Emote;
 };
 
 export type XY = { x: number, y: number };
@@ -98,6 +98,6 @@ export interface ServerToClientEvents {
 export interface ClientToServerEvents {
   chatMessage: (message: ChatMessage) => void;
   playerMovement: (movementData: PlayerLocation) => void;
-  playerEmote: (newEmote: number | undefined) => void;
+  playerEmote: (newEmote: Emote | undefined) => void;
   interactableUpdate: (update: Interactable) => void;
 }

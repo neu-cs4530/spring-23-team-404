@@ -474,7 +474,7 @@ describe('TownController', () => {
         id: nanoid(),
         location: { moving: false, rotation: 'back', x: 0, y: 1, interactableID: nanoid() },
         userName: nanoid(),
-        emoteID: undefined,
+        emote: undefined,
       };
       //Add that player to the test town
       testPlayerPlayersChangedFn = emitEventAndExpectListenerFiring(

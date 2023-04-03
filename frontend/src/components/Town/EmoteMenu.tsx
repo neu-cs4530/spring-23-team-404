@@ -1,8 +1,9 @@
 import React from 'react';
 import { Planet } from 'react-planet';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import useTownController from '../../hooks/useTownController';
 import { Button } from '@chakra-ui/react';
+import { Emote } from '../../types/CoveyTownSocket';
 
 export default function EmoteMenu(): JSX.Element {
   const controller = useTownController();
@@ -10,17 +11,9 @@ export default function EmoteMenu(): JSX.Element {
 
   const [menuOpen, setMenuOpen] = useState<boolean>(false);
 
-  useEffect(() => {
-    if (menuOpen) {
-      controller.pause();
-    } else {
-      controller.unPause();
-    }
-  }, [menuOpen, controller]);
-
   const handleChangeEmote = (emoteID: number) => {
     setMenuOpen(false);
-    controller.emitEmoteChange(emoteID);
+    controller.emitEmoteChange({ id: emoteID, timeCreated: new Date() } as Emote);
   };
 
   return (
