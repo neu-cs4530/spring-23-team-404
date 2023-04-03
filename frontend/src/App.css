@@ -54,8 +54,22 @@
   height: 200px;
   text-align: center;
 }
+#emote-menu {
+  position: absolute;
+  bottom: 25%;
+  transform: translateY(50%);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+}
+
 #map-container {
   flex-grow: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
 }
 
 .participant-wrapper {
