@@ -43,6 +43,7 @@
     "react-context-mutex": "^1.0.8",
     "react-dom": "^16.8.0",
     "react-hook-form": "^7.33.1",
+    "react-planet": "^1.0.1-ie11",
     "react-player": "^2.10.1",
     "react-router-dom": "^5.3.3",
     "react-scripts": "5.0.1",

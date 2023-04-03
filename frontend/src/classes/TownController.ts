@@ -12,6 +12,7 @@ import { TownsService, TownsServiceClient } from '../generated/client';
 import useTownController from '../hooks/useTownController';
 import {
   ChatMessage,
+  Emote,
   CoveyTownSocket,
   PlayerLocation,
   TownSettingsUpdate,
@@ -61,6 +62,10 @@ export type TownEvents = {
    * the new location can be found on the PlayerController.
    */
   playerMoved: (movedPlayer: PlayerController) => void;
+  /**
+   * An event that indicates that a player has emoted.
+   */
+  playerEmoted: (emotedPlayer: PlayerController) => void;
   /**
    * An event that indicates that the set of conversation areas has changed. This event is dispatched
    * when a conversation area is created, or when the set of active conversations has changed. This event is dispatched
@@ -417,7 +422,20 @@ export default class TownController extends (EventEmitter as new () => TypedEmit
         this.emit('playerMoved', newPlayer);
       }
     });
-
+    /**
+     * When a player emotes, update local state and emit an event to the controller's event listeners.
+     */
+    this._socket.on('playerEmoted', emotedPlayer => {
+      const playerToUpdate = this.players.find(eachPlayer => eachPlayer.id === emotedPlayer.id);
+      if (playerToUpdate) {
+        playerToUpdate.emote = emotedPlayer.emote;
+        this.emit('playerEmoted', playerToUpdate);
+      } else {
+        const newPlayer = PlayerController.fromPlayerModel(emotedPlayer);
+        this._players = this.players.concat(newPlayer);
+        this.emit('playerEmoted', newPlayer);
+      }
+    });
     /**
      * When an interactable's state changes, push that update into the relevant controller, which is assumed
      * to be either a Viewing Area, a Poster Session Area, or a Conversation Area, and which is assumed to already
@@ -470,6 +488,19 @@ export default class TownController extends (EventEmitter as new () => TypedEmit
     assert(ourPlayer);
     ourPlayer.location = newLocation;
     this.emit('playerMoved', ourPlayer);
+  }
+
+  /**
+   * Emit an emote event for the current player, updating the state locally and
+   * also notifying the townService that our player emoted.
+   * @param newEmote
+   */
+  public emitEmoteChange(newEmote: Emote | undefined) {
+    this._socket.emit('playerEmote', newEmote);
+    const ourPlayer = this._ourPlayer;
+    assert(ourPlayer);
+    ourPlayer.emote = newEmote;
+    this.emit('playerEmoted', ourPlayer);
   }
 
   /**

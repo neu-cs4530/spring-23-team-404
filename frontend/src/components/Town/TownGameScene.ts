@@ -122,6 +122,14 @@ export default class TownGameScene extends Phaser.Scene {
       '16_Grocery_store_32x32',
       this._resourcePathPrefix + '/assets/tilesets/16_Grocery_store_32x32.png',
     );
+    this.load.image('emote1', this._resourcePathPrefix + '/assets/emotes/emote1.png');
+    this.load.image('emote2', this._resourcePathPrefix + '/assets/emotes/emote2.png');
+    this.load.image('emote3', this._resourcePathPrefix + '/assets/emotes/emote3.png');
+    this.load.image('emote4', this._resourcePathPrefix + '/assets/emotes/emote4.png');
+    this.load.image('emote5', this._resourcePathPrefix + '/assets/emotes/emote5.png');
+    this.load.image('emote6', this._resourcePathPrefix + '/assets/emotes/emote6.png');
+    this.load.image('emote7', this._resourcePathPrefix + '/assets/emotes/emote7.png');
+    this.load.image('emote8', this._resourcePathPrefix + '/assets/emotes/emote8.png');
     this.load.tilemapTiledJSON('map', this._resourcePathPrefix + '/assets/tilemaps/indoors.json');
     this.load.atlas(
       'atlas',
@@ -141,15 +149,42 @@ export default class TownGameScene extends Phaser.Scene {
 
     disconnectedPlayers.forEach(disconnectedPlayer => {
       if (disconnectedPlayer.gameObjects) {
-        const { sprite, label } = disconnectedPlayer.gameObjects;
+        const { sprite, label, emote } = disconnectedPlayer.gameObjects;
         if (sprite && label) {
           sprite.destroy();
           label.destroy();
+        }
+        if (emote) {
+          emote.destroy();
         }
       }
     });
     // Remove disconnected players from list
     this._players = players;
+  }
+
+  updateEmote(emotedPlayer: PlayerController) {
+    if (emotedPlayer.gameObjects) {
+      const { sprite, label, emote } = emotedPlayer.gameObjects;
+      if (emote) {
+        emote.destroy();
+      }
+      let newEmote = undefined;
+      if (emotedPlayer.emote) {
+        const playerLocation = emotedPlayer.location;
+        newEmote = this.add
+          .sprite(playerLocation.x + 20, playerLocation.y - 40, `emote${emotedPlayer.emote.id}`)
+          .setSize(30, 40)
+          .setScale(2, 2)
+          .setDepth(5);
+      }
+      emotedPlayer.gameObjects = {
+        sprite,
+        label,
+        emote: newEmote,
+        locationManagedByGameScene: false,
+      };
+    }
   }
 
   getNewMovementDirection() {
@@ -198,6 +233,14 @@ export default class TownGameScene extends Phaser.Scene {
       return;
     }
     const gameObjects = this.coveyTownController.ourPlayer.gameObjects;
+    const ourEmote = this.coveyTownController.ourPlayer.emote;
+
+    // check if 5 seconds have passed, in which case the old emote expires
+    const now = new Date();
+    if (ourEmote && (now.getTime() - new Date(ourEmote.timeCreated).getTime()) / 1000 >= 5) {
+      this.coveyTownController.emitEmoteChange(undefined);
+    }
+
     if (gameObjects && this._cursors) {
       const speed = 175;
 
@@ -245,6 +288,10 @@ export default class TownGameScene extends Phaser.Scene {
       const isMoving = primaryDirection !== undefined;
       gameObjects.label.setX(body.x);
       gameObjects.label.setY(body.y - 20);
+      if (gameObjects.emote) {
+        gameObjects.emote.setX(body.x + 20);
+        gameObjects.emote.setY(body.y - 40);
+      }
       const x = gameObjects.sprite.getBounds().centerX;
       const y = gameObjects.sprite.getBounds().centerY;
       //Move the sprite
@@ -406,6 +453,7 @@ export default class TownGameScene extends Phaser.Scene {
     this.coveyTownController.ourPlayer.gameObjects = {
       sprite,
       label,
+      emote: undefined,
       locationManagedByGameScene: true,
     };
 
@@ -491,6 +539,9 @@ export default class TownGameScene extends Phaser.Scene {
     this._onGameReadyListeners.forEach(listener => listener());
     this._onGameReadyListeners = [];
     this.coveyTownController.addListener('playersChanged', players => this.updatePlayers(players));
+    this.coveyTownController.addListener('playerEmoted', emotedPlayer =>
+      this.updateEmote(emotedPlayer),
+    );
   }
 
   createPlayerSprites(player: PlayerController) {
@@ -513,6 +564,7 @@ export default class TownGameScene extends Phaser.Scene {
       player.gameObjects = {
         sprite,
         label,
+        emote: undefined,
         locationManagedByGameScene: false,
       };
     }

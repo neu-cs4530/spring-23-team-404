@@ -9,6 +9,7 @@ lerna-debug.log*
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 
+
 # Runtime data
 pids
 *.pid
@@ -64,6 +65,25 @@ typings/
 
 # Output of 'npm pack'
 *.tgz
+
+# dotenv environment variables file
+.env
+.env.local
+.env.*.local
+.env.development
+.env.test
+.env.ci-test
+.env.staging
+.env.production
+
+# Windows
+desktop.ini
+ngrok.yml
+
+.idea
+
+# Local Netlify folder
+.netlify
 
 # Yarn Integrity file
 .yarn-integrity

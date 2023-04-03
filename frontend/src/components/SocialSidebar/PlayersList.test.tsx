@@ -76,6 +76,7 @@ describe('PlayersInTownList', () => {
           `testingPlayerID${i}-${nanoid()}`,
           `testingPlayerUser${i}-${nanoid()}}`,
           randomLocation(),
+          undefined,
         ),
       );
     }
@@ -137,6 +138,7 @@ describe('PlayersInTownList', () => {
           `testingPlayerID-${i}.new`,
           `testingPlayerUser${i}.new`,
           randomLocation(),
+          undefined,
         ),
       ]);
       usePlayersSpy.mockReturnValue(newPlayers);
