@@ -13,6 +13,7 @@ import {
 } from '../TestUtils';
 import {
   ChatMessage,
+  Emote,
   Interactable,
   PlayerLocation,
   TownEmitter,
@@ -491,6 +492,7 @@ describe('Town', () => {
         'chatMessage',
         'playerMovement',
         'interactableUpdate',
+        'playerEmote',
       ];
       expectedEvents.forEach(eachEvent =>
         expect(getEventListener(playerTestData.socket, eachEvent)).toBeDefined(),
@@ -703,6 +705,43 @@ describe('Town', () => {
       expect(() => {
         getLastEmittedEvent(playerTestData.socket, 'chatMessage');
       }).toThrowError();
+    });
+    it('Successfully emits an emote event to players', async () => {
+      expect(playerTestData.player?.emote).toBeUndefined();
+
+      const emoteHandler = getEventListener(playerTestData.socket, 'playerEmote');
+      const emote: Emote = {
+        id: 1,
+        timeCreated: new Date(),
+      };
+
+      emoteHandler(emote);
+
+      const emotedPlayer = getLastEmittedEvent(townEmitter, 'playerEmoted');
+      expect(emotedPlayer.id).toEqual(playerTestData.player?.id);
+      expect(emotedPlayer.emote).toEqual(playerTestData.player?.emote);
+    });
+    it('Emitting undefined will remove a player emote', async () => {
+      expect(playerTestData.player?.emote).toBeUndefined();
+
+      const emoteHandler = getEventListener(playerTestData.socket, 'playerEmote');
+      const emote: Emote = {
+        id: 1,
+        timeCreated: new Date(),
+      };
+
+      emoteHandler(emote);
+
+      const emotedPlayer = getLastEmittedEvent(townEmitter, 'playerEmoted');
+      expect(emotedPlayer.id).toEqual(playerTestData.player?.id);
+      expect(emotedPlayer.emote).toEqual(playerTestData.player?.emote);
+
+      emoteHandler(undefined);
+
+      const emotedPlayer2 = getLastEmittedEvent(townEmitter, 'playerEmoted');
+      expect(emotedPlayer2.id).toEqual(playerTestData.player?.id);
+      expect(emotedPlayer2.emote).toEqual(playerTestData.player?.emote);
+      expect(playerTestData.player?.emote).toBeUndefined();
     });
   });
   describe('addConversationArea', () => {
