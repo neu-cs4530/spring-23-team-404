@@ -17,9 +17,9 @@ describe('[T2] ConversationAreaController', () => {
     };
     testArea = new ConversationAreaController(nanoid(), nanoid());
     testArea.occupants = [
-      new PlayerController(nanoid(), nanoid(), playerLocation, undefined),
-      new PlayerController(nanoid(), nanoid(), playerLocation, undefined),
-      new PlayerController(nanoid(), nanoid(), playerLocation, undefined),
+      new PlayerController(nanoid(), nanoid(), playerLocation, undefined, undefined),
+      new PlayerController(nanoid(), nanoid(), playerLocation, undefined, undefined),
+      new PlayerController(nanoid(), nanoid(), playerLocation, undefined, undefined),
     ];
     mockClear(mockListeners.occupantsChange);
     mockClear(mockListeners.topicChange);

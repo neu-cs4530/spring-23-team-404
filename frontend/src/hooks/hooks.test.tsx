@@ -150,6 +150,7 @@ describe('[T3] TownController-Dependent Hooks', () => {
             nanoid(),
             { moving: false, rotation: 'back', x: 0, y: 1 },
             undefined,
+            undefined,
           ),
         );
       }
@@ -383,6 +384,7 @@ describe('ConversationAreaController hooks', () => {
             nanoid(),
             nanoid(),
             { moving: false, rotation: 'back', x: 0, y: 1 },
+            undefined,
             undefined,
           ),
         );

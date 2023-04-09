@@ -720,6 +720,7 @@ describe('Town', () => {
       const emotedPlayer = getLastEmittedEvent(townEmitter, 'playerEmoted');
       expect(emotedPlayer.id).toEqual(playerTestData.player?.id);
       expect(emotedPlayer.emote).toEqual(playerTestData.player?.emote);
+      expect(playerTestData.player?.emote?.id).toEqual(1);
     });
     it('Emitting undefined will remove a player emote', async () => {
       expect(playerTestData.player?.emote).toBeUndefined();
@@ -735,6 +736,7 @@ describe('Town', () => {
       const emotedPlayer = getLastEmittedEvent(townEmitter, 'playerEmoted');
       expect(emotedPlayer.id).toEqual(playerTestData.player?.id);
       expect(emotedPlayer.emote).toEqual(playerTestData.player?.emote);
+      expect(playerTestData.player?.emote?.id).toEqual(1);
 
       emoteHandler(undefined);
 
@@ -742,6 +744,37 @@ describe('Town', () => {
       expect(emotedPlayer2.id).toEqual(playerTestData.player?.id);
       expect(emotedPlayer2.emote).toEqual(playerTestData.player?.emote);
       expect(playerTestData.player?.emote).toBeUndefined();
+    });
+    it('Successfully emits a status update event to players', async () => {
+      expect(playerTestData.player?.status).toBeUndefined();
+
+      const statusHandler = getEventListener(playerTestData.socket, 'playerStatusUpdate');
+
+      statusHandler('Hello!');
+
+      const updatedPlayer = getLastEmittedEvent(townEmitter, 'playerUpdatedStatus');
+      expect(updatedPlayer.id).toEqual(playerTestData.player?.id);
+      expect(updatedPlayer.status).toEqual(playerTestData.player?.status);
+      expect(playerTestData.player?.status).toEqual('Hello!');
+    });
+    it('Emitting undefined will remove a player status', async () => {
+      expect(playerTestData.player?.status).toBeUndefined();
+
+      const statusHandler = getEventListener(playerTestData.socket, 'playerStatusUpdate');
+
+      statusHandler('Hello!');
+
+      const updatedPlayer = getLastEmittedEvent(townEmitter, 'playerUpdatedStatus');
+      expect(updatedPlayer.id).toEqual(playerTestData.player?.id);
+      expect(updatedPlayer.status).toEqual(playerTestData.player?.status);
+      expect(playerTestData.player?.status).toEqual('Hello!');
+
+      statusHandler(undefined);
+
+      const updatedPlayer2 = getLastEmittedEvent(townEmitter, 'playerUpdatedStatus');
+      expect(updatedPlayer2.id).toEqual(playerTestData.player?.id);
+      expect(updatedPlayer2.status).toEqual(playerTestData.player?.status);
+      expect(playerTestData.player?.status).toBeUndefined();
     });
   });
   describe('addConversationArea', () => {

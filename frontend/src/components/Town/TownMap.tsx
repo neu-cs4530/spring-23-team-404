@@ -7,6 +7,7 @@ import NewConversationModal from './interactables/NewCoversationModal';
 import TownGameScene from './TownGameScene';
 import PosterViewerWrapper from './interactables/PosterViewer';
 import EmoteMenu from './EmoteMenu';
+import StatusUpdateModal from './StatusUpdateModal';
 
 export default function TownMap(): JSX.Element {
   const coveyTownController = useTownController();
@@ -54,6 +55,7 @@ export default function TownMap(): JSX.Element {
       <div id='map-container'>
         <div id='emote-menu'>
           <EmoteMenu />
+          <StatusUpdateModal />
         </div>
       </div>
       <div id='social-container'>

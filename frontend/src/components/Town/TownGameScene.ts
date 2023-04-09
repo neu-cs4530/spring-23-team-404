@@ -149,7 +149,7 @@ export default class TownGameScene extends Phaser.Scene {
 
     disconnectedPlayers.forEach(disconnectedPlayer => {
       if (disconnectedPlayer.gameObjects) {
-        const { sprite, label, emote } = disconnectedPlayer.gameObjects;
+        const { sprite, label, emote, status } = disconnectedPlayer.gameObjects;
         if (sprite && label) {
           sprite.destroy();
           label.destroy();
@@ -157,31 +157,55 @@ export default class TownGameScene extends Phaser.Scene {
         if (emote) {
           emote.destroy();
         }
+        if (status) {
+          status.destroy();
+        }
       }
     });
     // Remove disconnected players from list
     this._players = players;
   }
 
-  updateEmote(emotedPlayer: PlayerController) {
-    if (emotedPlayer.gameObjects) {
-      const { sprite, label, emote } = emotedPlayer.gameObjects;
+  /**
+   * Called if the player updates their emote or status.
+   */
+  updateSprite(updatedPlayer: PlayerController) {
+    if (updatedPlayer.gameObjects) {
+      const { sprite, label, emote, status } = updatedPlayer.gameObjects;
       if (emote) {
         emote.destroy();
       }
+      if (status) {
+        status.destroy();
+      }
       let newEmote = undefined;
-      if (emotedPlayer.emote) {
-        const playerLocation = emotedPlayer.location;
+      let newStatus = undefined;
+      const playerLocation = updatedPlayer.location;
+      if (updatedPlayer.emote) {
         newEmote = this.add
-          .sprite(playerLocation.x + 20, playerLocation.y - 40, `emote${emotedPlayer.emote.id}`)
+          .sprite(playerLocation.x + 20, playerLocation.y - 40, `emote${updatedPlayer.emote.id}`)
           .setSize(30, 40)
           .setScale(2, 2)
           .setDepth(5);
       }
-      emotedPlayer.gameObjects = {
+      if (updatedPlayer.status) {
+        newStatus = this.add.text(
+          playerLocation.x + 20,
+          playerLocation.y + 40,
+          updatedPlayer.status,
+          {
+            font: '14px monospace',
+            color: '#000000',
+            // padding: {x: 20, y: 10},
+            backgroundColor: '#ffffff',
+          },
+        );
+      }
+      updatedPlayer.gameObjects = {
         sprite,
         label,
         emote: newEmote,
+        status: newStatus,
         locationManagedByGameScene: false,
       };
     }
@@ -291,6 +315,10 @@ export default class TownGameScene extends Phaser.Scene {
       if (gameObjects.emote) {
         gameObjects.emote.setX(body.x + 20);
         gameObjects.emote.setY(body.y - 40);
+      }
+      if (gameObjects.status) {
+        gameObjects.status.setX(body.x);
+        gameObjects.status.setY(body.y + 40);
       }
       const x = gameObjects.sprite.getBounds().centerX;
       const y = gameObjects.sprite.getBounds().centerY;
@@ -454,6 +482,7 @@ export default class TownGameScene extends Phaser.Scene {
       sprite,
       label,
       emote: undefined,
+      status: undefined,
       locationManagedByGameScene: true,
     };
 
@@ -540,7 +569,10 @@ export default class TownGameScene extends Phaser.Scene {
     this._onGameReadyListeners = [];
     this.coveyTownController.addListener('playersChanged', players => this.updatePlayers(players));
     this.coveyTownController.addListener('playerEmoted', emotedPlayer =>
-      this.updateEmote(emotedPlayer),
+      this.updateSprite(emotedPlayer),
+    );
+    this.coveyTownController.addListener('playerUpdatedStatus', updatedPlayer =>
+      this.updateSprite(updatedPlayer),
     );
   }
 
@@ -565,6 +597,7 @@ export default class TownGameScene extends Phaser.Scene {
         sprite,
         label,
         emote: undefined,
+        status: undefined,
         locationManagedByGameScene: false,
       };
     }
