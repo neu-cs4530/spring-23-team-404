@@ -28,7 +28,7 @@ export default function EmoteMenu(): JSX.Element {
       orbitRadius={100}
       rotation={68}>
       {emoteIDs.map(emote => (
-        <Button key={emote} onClick={() => handleChangeEmote(emote)}>
+        <Button data-testid={emote} key={emote} onClick={() => handleChangeEmote(emote)}>
           {emote}
         </Button>
       ))}
