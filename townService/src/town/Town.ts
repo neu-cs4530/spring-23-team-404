@@ -154,6 +154,13 @@ export default class Town {
       this._broadcastEmitter.emit('playerEmoted', newPlayer.toPlayerModel());
     });
 
+    // Register an event listener for the client socket: if the client updates their
+    // emotional status, inform the CoveyTownController
+    socket.on('playerStatusUpdate', (newStatus: string | undefined) => {
+      newPlayer.status = newStatus;
+      this._broadcastEmitter.emit('playerUpdatedStatus', newPlayer.toPlayerModel());
+    });
+
     // Set up a listener to process updates to interactables.
     // Currently only knows how to process updates for ViewingAreas and PosterSessionAreas, and
     // ignores any other updates for any other kind of interactable.

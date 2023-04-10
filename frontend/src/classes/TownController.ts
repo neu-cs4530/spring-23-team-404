@@ -67,6 +67,10 @@ export type TownEvents = {
    */
   playerEmoted: (emotedPlayer: PlayerController) => void;
   /**
+   * An event that indicates that a player has updated their emotional status.
+   */
+  playerUpdatedStatus: (updatedPlayer: PlayerController) => void;
+  /**
    * An event that indicates that the set of conversation areas has changed. This event is dispatched
    * when a conversation area is created, or when the set of active conversations has changed. This event is dispatched
    * after updating the town controller's record of conversation areas.
@@ -437,6 +441,20 @@ export default class TownController extends (EventEmitter as new () => TypedEmit
       }
     });
     /**
+     * When a player updates their status, update local state and emit an event to the controller's event listeners.
+     */
+    this._socket.on('playerUpdatedStatus', updatedPlayer => {
+      const playerToUpdate = this.players.find(eachPlayer => eachPlayer.id === updatedPlayer.id);
+      if (playerToUpdate) {
+        playerToUpdate.status = updatedPlayer.status;
+        this.emit('playerUpdatedStatus', playerToUpdate);
+      } else {
+        const newPlayer = PlayerController.fromPlayerModel(updatedPlayer);
+        this._players = this.players.concat(newPlayer);
+        this.emit('playerUpdatedStatus', newPlayer);
+      }
+    });
+    /**
      * When an interactable's state changes, push that update into the relevant controller, which is assumed
      * to be either a Viewing Area, a Poster Session Area, or a Conversation Area, and which is assumed to already
      * be represented by a ViewingAreaController, PosterSessionAreaController or ConversationAreaController that this TownController has.
@@ -501,6 +519,19 @@ export default class TownController extends (EventEmitter as new () => TypedEmit
     assert(ourPlayer);
     ourPlayer.emote = newEmote;
     this.emit('playerEmoted', ourPlayer);
+  }
+
+  /**
+   * Emit a status update event for the current player, updating the state locally and
+   * also notifying the townService that our player updated their status.
+   * @param newStatus
+   */
+  public emitStatusUpdateChange(newStatus: string | undefined) {
+    this._socket.emit('playerStatusUpdate', newStatus);
+    const ourPlayer = this._ourPlayer;
+    assert(ourPlayer);
+    ourPlayer.status = newStatus;
+    this.emit('playerUpdatedStatus', ourPlayer);
   }
 
   /**

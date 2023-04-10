@@ -142,6 +142,7 @@ describe('ConversationAreasList', () => {
               moving: false,
             },
             undefined,
+            undefined,
           ),
         );
       }

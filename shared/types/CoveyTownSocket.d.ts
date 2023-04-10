@@ -30,6 +30,7 @@ export interface Player {
   userName: string;
   location: PlayerLocation;
   emote?: Emote;
+  status?: string;
 };
 
 export type XY = { x: number, y: number };
@@ -86,6 +87,7 @@ export interface PosterSessionArea {
 export interface ServerToClientEvents {
   playerMoved: (movedPlayer: Player) => void;
   playerEmoted: (emotedPlayer: Player) => void;
+  playerUpdatedStatus: (updatedPlayer: Player) => void;
   playerDisconnect: (disconnectedPlayer: Player) => void;
   playerJoined: (newPlayer: Player) => void;
   initialize: (initialData: TownJoinResponse) => void;
@@ -99,5 +101,6 @@ export interface ClientToServerEvents {
   chatMessage: (message: ChatMessage) => void;
   playerMovement: (movementData: PlayerLocation) => void;
   playerEmote: (newEmote: Emote | undefined) => void;
+  playerStatusUpdate: (newStatus: string | undefined) => void;
   interactableUpdate: (update: Interactable) => void;
 }

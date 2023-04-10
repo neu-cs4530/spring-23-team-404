@@ -77,6 +77,7 @@ describe('PlayersInTownList', () => {
           `testingPlayerUser${i}-${nanoid()}}`,
           randomLocation(),
           undefined,
+          undefined,
         ),
       );
     }
@@ -138,6 +139,7 @@ describe('PlayersInTownList', () => {
           `testingPlayerID-${i}.new`,
           `testingPlayerUser${i}.new`,
           randomLocation(),
+          undefined,
           undefined,
         ),
       ]);
