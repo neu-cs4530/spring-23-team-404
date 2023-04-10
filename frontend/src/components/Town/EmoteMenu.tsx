@@ -32,11 +32,11 @@ export default function EmoteMenu(): JSX.Element {
           {emote}
         </Button>
       ))}
-      <div />
-      <div />
-      <div />
-      <div />
-      <div />
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
     </Planet>
   );
 }
