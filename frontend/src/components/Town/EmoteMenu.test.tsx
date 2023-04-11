@@ -63,5 +63,85 @@ describe('Create Emote Menu', () => {
 
       expect(townController.emitEmoteChange).toHaveBeenCalledTimes(1);
     });
+
+    it('Emote change event is emitted if the second emote button is pressed', async () => {
+      // open menu
+      act(() => {
+        fireEvent.click(emoteMenuButton);
+      });
+
+      // button for the second emote
+      const emote2Button = renderData.getByTestId(2);
+
+      act(() => {
+        fireEvent.click(emote2Button);
+      });
+
+      expect(townController.emitEmoteChange).toHaveBeenCalledTimes(1);
+    });
+
+    it('Emote change event is emitted if the third emote button is pressed', async () => {
+      // open menu
+      act(() => {
+        fireEvent.click(emoteMenuButton);
+      });
+
+      // button for the third emote
+      const emote3Button = renderData.getByTestId(3);
+
+      act(() => {
+        fireEvent.click(emote3Button);
+      });
+
+      expect(townController.emitEmoteChange).toHaveBeenCalledTimes(1);
+    });
+
+    it('Emote change event is emitted if the fourth emote button is pressed', async () => {
+      // open menu
+      act(() => {
+        fireEvent.click(emoteMenuButton);
+      });
+
+      // button for the fourth emote
+      const emote4Button = renderData.getByTestId(4);
+
+      act(() => {
+        fireEvent.click(emote4Button);
+      });
+
+      expect(townController.emitEmoteChange).toHaveBeenCalledTimes(1);
+    });
+
+    it('Emote change event is emitted if the fifth emote button is pressed', async () => {
+      // open menu
+      act(() => {
+        fireEvent.click(emoteMenuButton);
+      });
+
+      // button for the fifth emote
+      const emote5Button = renderData.getByTestId(5);
+
+      act(() => {
+        fireEvent.click(emote5Button);
+      });
+
+      expect(townController.emitEmoteChange).toHaveBeenCalledTimes(1);
+    });
+
+    it('Emote change event is emitted if the sixth emote button is pressed', async () => {
+      // open menu
+      act(() => {
+        fireEvent.click(emoteMenuButton);
+      });
+
+      // button for the sixth emote
+      const emote6Button = renderData.getByTestId(6);
+
+      act(() => {
+        fireEvent.click(emote6Button);
+      });
+
+      expect(townController.emitEmoteChange).toHaveBeenCalledTimes(1);
+    });
   });
 });

@@ -63,5 +63,27 @@ describe('Create Emote Menu', () => {
 
       expect(townController.emitStatusUpdateChange).toHaveBeenCalledTimes(1);
     });
+
+    it('Status update event is emitted on submit and if menu is opened or closed and subitted again', async () => {
+      expect(townController.emitStatusUpdateChange).toHaveBeenCalledTimes(0);
+
+      // open modal
+      act(() => {
+        fireEvent.click(updateStatusButton);
+      });
+
+      expect(townController.emitStatusUpdateChange).toHaveBeenCalledTimes(0);
+      const closeButton = renderData.getByTestId('cancel');
+      const createButton = renderData.getByTestId('create');
+
+      // close modal
+      act(() => {
+        fireEvent.click(createButton);
+        fireEvent.click(closeButton);
+        fireEvent.click(createButton);
+      });
+
+      expect(townController.emitStatusUpdateChange).toHaveBeenCalledTimes(2);
+    });
   });
 });
