@@ -91,6 +91,30 @@ describe('Create Emote Menu', () => {
       expect(townController.emitEmoteChange).toHaveBeenCalledTimes(1);
     });
 
+    it('Emote change event if emote button is pressed, then menu is opened or closed, then another emote button is pressed', async () => {
+      expect(townController.emitEmoteChange).toHaveBeenCalledTimes(0);
+
+      // open menu
+      act(() => {
+        fireEvent.click(emoteMenuButton);
+      });
+
+      // button for the first emote
+      const emote1Button = renderData.getByTestId(1);
+      // button for the second emote
+      const emote2Button = renderData.getByTestId(1);
+      expect(townController.emitEmoteChange).toHaveBeenCalledTimes(0);
+
+      // close menu
+      act(() => {
+        fireEvent.click(emote1Button);
+        fireEvent.click(emoteMenuButton);
+        fireEvent.click(emote2Button);
+      });
+
+      expect(townController.emitEmoteChange).toHaveBeenCalledTimes(2);
+    });
+
     it('Emote change event is emitted if an individual emote button is pressed', async () => {
       // open menu
       act(() => {
