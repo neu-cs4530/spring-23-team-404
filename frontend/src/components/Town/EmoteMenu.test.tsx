@@ -143,5 +143,21 @@ describe('Create Emote Menu', () => {
 
       expect(townController.emitEmoteChange).toHaveBeenCalledTimes(1);
     });
+
+    it('Emote change event is emitted if the seventh emote button is pressed', async () => {
+      // open menu
+      act(() => {
+        fireEvent.click(emoteMenuButton);
+      });
+
+      // button for the seventh emote
+      const emote7Button = renderData.getByTestId(7);
+
+      act(() => {
+        fireEvent.click(emote7Button);
+      });
+
+      expect(townController.emitEmoteChange).toHaveBeenCalledTimes(1);
+    });
   });
 });
