@@ -63,5 +63,23 @@ describe('Create Emote Menu', () => {
 
       expect(townController.emitStatusUpdateChange).toHaveBeenCalledTimes(1);
     });
+
+    it('Status update event is emitted on delete', async () => {
+      expect(townController.emitStatusUpdateChange).toHaveBeenCalledTimes(0);
+
+      // open modal
+      act(() => {
+        fireEvent.click(updateStatusButton);
+      });
+
+      expect(townController.emitStatusUpdateChange).toHaveBeenCalledTimes(0);
+      const deleteButton = renderData.getByTestId('delete');
+
+      act(() => {
+        fireEvent.click(deleteButton);
+      });
+
+      expect(townController.emitStatusUpdateChange).toHaveBeenCalledTimes(1);
+    });
   });
 });

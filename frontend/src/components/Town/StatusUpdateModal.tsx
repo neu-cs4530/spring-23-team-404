@@ -77,7 +77,7 @@ export default function StatusUpdateModal(): JSX.Element {
               <Button data-testid='cancel' mr={3} onClick={() => setIsOpen(false)}>
                 Cancel
               </Button>
-              <Button colorScheme='red' onClick={handleStatusDelete}>
+              <Button data-testid='delete' colorScheme='red' onClick={handleStatusDelete}>
                 Delete status
               </Button>
             </ModalFooter>
