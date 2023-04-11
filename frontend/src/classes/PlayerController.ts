@@ -14,6 +14,8 @@ export type PlayerGameObjects = {
   locationManagedByGameScene: boolean /* For the local player, the game scene will calculate the current location, and we should NOT apply updates when we receive events */;
 };
 export default class PlayerController extends (EventEmitter as new () => TypedEmitter<PlayerEvents>) {
+  private _emotes?: string[];
+
   private _location: PlayerLocation;
 
   private _emote?: Emote;
@@ -31,6 +33,7 @@ export default class PlayerController extends (EventEmitter as new () => TypedEm
     userName: string,
     location: PlayerLocation,
     emote: Emote | undefined,
+    emotes: string[] | undefined,
     status: string | undefined,
   ) {
     super();
@@ -38,6 +41,7 @@ export default class PlayerController extends (EventEmitter as new () => TypedEm
     this._userName = userName;
     this._location = location;
     this._emote = emote;
+    this._emotes = emotes;
     this._status = status;
   }
 
@@ -55,8 +59,16 @@ export default class PlayerController extends (EventEmitter as new () => TypedEm
     this._emote = newEmote;
   }
 
+  set emotes(newEmotes: string[] | undefined) {
+    this._emotes = newEmotes;
+  }
+
   get emote(): Emote | undefined {
     return this._emote;
+  }
+
+  get emotes(): string[] | undefined {
+    return this._emotes;
   }
 
   set status(newStatus: string | undefined) {
@@ -116,6 +128,7 @@ export default class PlayerController extends (EventEmitter as new () => TypedEm
       modelPlayer.userName,
       modelPlayer.location,
       modelPlayer.emote,
+      modelPlayer.emotes,
       modelPlayer.status,
     );
   }

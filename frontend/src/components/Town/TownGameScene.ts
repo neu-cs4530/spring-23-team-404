@@ -1,3 +1,4 @@
+import assert from 'assert';
 import Phaser from 'phaser';
 import PlayerController from '../../classes/PlayerController';
 import TownController from '../../classes/TownController';
@@ -8,7 +9,6 @@ import ConversationArea from './interactables/ConversationArea';
 import Transporter from './interactables/Transporter';
 import ViewingArea from './interactables/ViewingArea';
 import PosterSessionArea from './interactables/PosterSessionArea';
-import RedisClient from '../../lib/redis';
 import { EncodingParameters } from 'twilio-video';
 
 // Still not sure what the right type is here... "Interactable" doesn't do it
@@ -84,23 +84,15 @@ export default class TownGameScene extends Phaser.Scene {
 
   private _resourcePathPrefix: string;
 
-  private _client : RedisClient;
-
   constructor(coveyTownController: TownController, resourcePathPrefix = '') {
     super('TownGameScene');
     this._resourcePathPrefix = resourcePathPrefix;
     this.coveyTownController = coveyTownController;
     this._players = this.coveyTownController.players;
-    this._client = new RedisClient();
   }
 
   preload() {
-    Promise.resolve(this._client.start()).then((result) => {
-      const emotes : string[] = result;
-      for (let i = 1; i < emotes.length + 1; ++i) {
-        emotes.forEach((emote) => this.textures.addBase64('emote' + i, emote));
-      }
-    });
+    this.coveyTownController.emitLoadingSprites();
 
     this.load.image(
       'Room_Builder_32x32',
@@ -148,6 +140,14 @@ export default class TownGameScene extends Phaser.Scene {
       this._resourcePathPrefix + '/assets/atlas/atlas.png',
       this._resourcePathPrefix + '/assets/atlas/atlas.json',
     );
+  }
+
+  loadSprites(updatedPlayer: PlayerController) {
+    const emotes = updatedPlayer.emotes;
+    assert(emotes);
+    for (let i = 1; i < emotes.length + 1; ++i) {
+      emotes.forEach((emote) => this.textures.addBase64('emote' + i, emote));
+    }
   }
 
   updatePlayers(players: PlayerController[]) {
@@ -586,6 +586,7 @@ export default class TownGameScene extends Phaser.Scene {
     this.coveyTownController.addListener('playerUpdatedStatus', updatedPlayer =>
       this.updateSprite(updatedPlayer),
     );
+    this.coveyTownController.addListener('emotesSent', updatedPlayer => this.loadSprites(updatedPlayer));
   }
 
   createPlayerSprites(player: PlayerController) {

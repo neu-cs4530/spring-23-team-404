@@ -273,6 +273,19 @@ export class TownsController extends Controller {
     return newStars;
   }
 
+  @Patch('{townID}/emotes')
+  @Response<InvalidParametersError>(400, 'Invalid values specified')
+  public async getInitialEmotes(
+    @Header('X-Session-Token') sessionToken: string,
+  ): Promise<string[]> {
+    const client: RedisClient = new RedisClient();
+    return client.start();
+    // Promise.resolve(client.start()).then(result => {
+    //   return result;
+    // });
+
+  }
+
   /**
    * Connects a client's socket to the requested town, or disconnects the socket if no such town exists
    *

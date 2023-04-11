@@ -66,6 +66,16 @@ export type TownEvents = {
    * An event that indicates that a player has emoted.
    */
   playerEmoted: (emotedPlayer: PlayerController) => void;
+
+  /**
+   * An event that the emotes has been sent to the player
+   */
+  emotesSent: (emotesSentPlayer: PlayerController) => void;
+
+  /**
+   * An event to indicate that the frontend is ready to import sprites
+   */
+  loadingSprites: () => void;
   /**
    * An event that indicates that a player has updated their emotional status.
    */
@@ -508,6 +518,17 @@ export default class TownController extends (EventEmitter as new () => TypedEmit
     this.emit('playerMoved', ourPlayer);
   }
 
+  public removeSprites() {
+    const ourPlayer = this._ourPlayer;
+    assert(ourPlayer);
+    ourPlayer.emotes = undefined;
+  }
+
+  public emitLoadingSprites() {
+      const townController = useTownController();
+      townController.addListener('finishedLoading', this.removeSprites);
+  }
+
   /**
    * Emit an emote event for the current player, updating the state locally and
    * also notifying the townService that our player emoted.
@@ -746,6 +767,10 @@ export default class TownController extends (EventEmitter as new () => TypedEmit
       posterSessionArea.id,
       this.sessionToken,
     );
+  }
+
+  public async getInitialEmotes(): Promise<string[]> {
+    return this._townsService.getInitialEmotes(this.sessionToken);
   }
 
   /**
