@@ -48,6 +48,28 @@ describe('Create Emote Menu', () => {
 
       expect(townController.emitEmoteChange).toHaveBeenCalledTimes(0);
     });
+
+    it('Emote change event is emote button is pressed, then menu is opened or closed', async () => {
+      expect(townController.emitEmoteChange).toHaveBeenCalledTimes(0);
+
+      // open menu
+      act(() => {
+        fireEvent.click(emoteMenuButton);
+      });
+
+      // button for the first emote
+      const emote1Button = renderData.getByTestId(1);
+      expect(townController.emitEmoteChange).toHaveBeenCalledTimes(0);
+
+      // close menu
+      act(() => {
+        fireEvent.click(emote1Button);
+        fireEvent.click(emoteMenuButton);
+      });
+
+      expect(townController.emitEmoteChange).toHaveBeenCalledTimes(1);
+    });
+
     it('Emote change event is emitted if an individual emote button is pressed', async () => {
       // open menu
       act(() => {
