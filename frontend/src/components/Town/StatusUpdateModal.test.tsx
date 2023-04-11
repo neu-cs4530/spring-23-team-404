@@ -64,7 +64,7 @@ describe('Create Emote Menu', () => {
       expect(townController.emitStatusUpdateChange).toHaveBeenCalledTimes(1);
     });
 
-    it('Status update event is emitted on submit and if menu is opened or closed and subitted again', async () => {
+    it('Status update event is emitted on delete', async () => {
       expect(townController.emitStatusUpdateChange).toHaveBeenCalledTimes(0);
 
       // open modal
@@ -73,17 +73,13 @@ describe('Create Emote Menu', () => {
       });
 
       expect(townController.emitStatusUpdateChange).toHaveBeenCalledTimes(0);
-      const closeButton = renderData.getByTestId('cancel');
-      const createButton = renderData.getByTestId('create');
+      const deleteButton = renderData.getByTestId('delete');
 
-      // close modal
       act(() => {
-        fireEvent.click(createButton);
-        fireEvent.click(closeButton);
-        fireEvent.click(createButton);
+        fireEvent.click(deleteButton);
       });
 
-      expect(townController.emitStatusUpdateChange).toHaveBeenCalledTimes(2);
+      expect(townController.emitStatusUpdateChange).toHaveBeenCalledTimes(1);
     });
   });
 });
