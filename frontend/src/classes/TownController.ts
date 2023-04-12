@@ -524,7 +524,7 @@ export default class TownController extends (EventEmitter as new () => TypedEmit
   //   ourPlayer.emotes = undefined;
   // }
 
-  public emitLoadingSprites(): Promise<string[]> {
+  public emitLoadingSprites(): Promise<(string | null)[]> {
     this.emit('clientReceivedEmotes');
     return this.getInitialEmotes();
   }
@@ -769,7 +769,7 @@ export default class TownController extends (EventEmitter as new () => TypedEmit
     );
   }
 
-  public async getInitialEmotes(): Promise<string[]> {
+  public async getInitialEmotes(): Promise<(string | null)[]> {
     return this._townsService.getInitialEmotes();
   }
 

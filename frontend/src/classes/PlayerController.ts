@@ -118,7 +118,7 @@ export default class PlayerController extends (EventEmitter as new () => TypedEm
       modelPlayer.userName,
       modelPlayer.location,
       modelPlayer.emote,
-      modelPlayer.status
+      modelPlayer.status,
     );
   }
 }

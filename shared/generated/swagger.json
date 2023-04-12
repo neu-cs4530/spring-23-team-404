@@ -658,12 +658,13 @@
 				"operationId": "GetInitialEmotes",
 				"responses": {
 					"200": {
-						"description": "Ok",
+						"description": "array of png images to preload",
 						"content": {
 							"application/json": {
 								"schema": {
 									"items": {
-										"type": "string"
+										"type": "string",
+										"nullable": true
 									},
 									"type": "array"
 								}
@@ -681,6 +682,7 @@
 						}
 					}
 				},
+				"description": "Start Redis client and retreive emotes from Redis database.",
 				"tags": [
 					"towns"
 				],

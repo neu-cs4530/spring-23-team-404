@@ -274,15 +274,15 @@ export class TownsController extends Controller {
     return newStars;
   }
 
+  /**
+   * Start Redis client and retreive emotes from Redis database.
+   * @returns array of png images to preload
+   */
   @Patch('{townID}/emotes')
   @Response<InvalidParametersError>(400, 'Invalid values specified')
-  public async getInitialEmotes(): Promise<string[]> {
+  public async getInitialEmotes(): Promise<(string | null)[]> {
     const client: RedisClient = new RedisClient();
-    console.log('received request');
     return client.start();
-    // Promise.resolve(client.start()).then(result => {
-    //   return result;
-    // });
   }
 
   /**

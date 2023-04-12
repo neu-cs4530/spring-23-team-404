@@ -154,15 +154,6 @@ export default class Town {
       this._broadcastEmitter.emit('playerEmoted', newPlayer.toPlayerModel());
     });
 
-    // socket.on('loadingSprites', () => {
-    //   const client : RedisClient = new RedisClient();
-    //   Promise.resolve(client.start()).then((result) => {
-    //   const emotes : string[] = result;
-    //   newPlayer.emotes = emotes;
-    //   });
-    //   this._broadcastEmitter.emit('emotesSent', newPlayer.toPlayerModel());
-    // });
-
     // Register an event listener for the client socket: if the client updates their
     // emotional status, inform the CoveyTownController
     socket.on('playerStatusUpdate', (newStatus: string | undefined) => {

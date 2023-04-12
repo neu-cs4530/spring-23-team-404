@@ -9,7 +9,6 @@ import ConversationArea from './interactables/ConversationArea';
 import Transporter from './interactables/Transporter';
 import ViewingArea from './interactables/ViewingArea';
 import PosterSessionArea from './interactables/PosterSessionArea';
-import { EncodingParameters } from 'twilio-video';
 
 // Still not sure what the right type is here... "Interactable" doesn't do it
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -128,14 +127,6 @@ export default class TownGameScene extends Phaser.Scene {
       '16_Grocery_store_32x32',
       this._resourcePathPrefix + '/assets/tilesets/16_Grocery_store_32x32.png',
     );
-    // this.load.image('emote1', this._resourcePathPrefix + '/assets/emotes/emote1.png');
-    // this.load.image('emote2', this._resourcePathPrefix + '/assets/emotes/emote2.png');
-    // this.load.image('emote3', this._resourcePathPrefix + '/assets/emotes/emote3.png');
-    // this.load.image('emote4', this._resourcePathPrefix + '/assets/emotes/emote4.png');
-    // this.load.image('emote5', this._resourcePathPrefix + '/assets/emotes/emote5.png');
-    // this.load.image('emote6', this._resourcePathPrefix + '/assets/emotes/emote6.png');
-    // this.load.image('emote7', this._resourcePathPrefix + '/assets/emotes/emote7.png');
-    // this.load.image('emote8', this._resourcePathPrefix + '/assets/emotes/emote8.png');
     this.load.tilemapTiledJSON('map', this._resourcePathPrefix + '/assets/tilemaps/indoors.json');
     this.load.atlas(
       'atlas',
@@ -144,13 +135,16 @@ export default class TownGameScene extends Phaser.Scene {
     );
   }
 
-  loadSprites(emotes: string[]) {
+  /**
+   * Load the emotes from an array of emotes.
+   * @param emotes Array of base64 emotes
+   */
+  loadSprites(emotes: (string | null)[]) {
     assert(emotes);
     for (let i = 1; i < emotes.length + 1; ++i) {
-      this.textures.addBase64('emote' + i as string, emotes[i-1]);
-      console.log('hello');
-      console.log(emotes[i-1]);
-      // emotes.forEach((emote) => this.textures.addBase64('emote' + i, emote));
+      const emote = emotes[i - 1];
+      assert(emote);
+      this.textures.addBase64('emote' + i, emote);
     }
   }
 

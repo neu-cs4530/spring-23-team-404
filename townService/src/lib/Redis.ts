@@ -1,46 +1,43 @@
 import { createClient } from 'redis';
-import * as fs from 'fs';
-import { privateEncrypt } from 'crypto';
 
+/**
+ * Redis client class for establishing connection with emote database.
+ */
 export default class RedisClient {
-  private PASSWORD: string = 'r8OhsBMJgzVXrzCmEN1Uh1rc4Hhbg6lg';
-  private HOST: string = 'redis-14638.c281.us-east-1-2.ec2.cloud.redislabs.com';
-  private PORT: number = 14638;
+  // Temporary redis passwords and usernames
+  private _password = 'r8OhsBMJgzVXrzCmEN1Uh1rc4Hhbg6lg';
 
-  private REDIS_URL: string =
-    'redis://default:' + this.PASSWORD + '@' + this.HOST + ':' + this.PORT;
+  private _host = 'redis-14638.c281.us-east-1-2.ec2.cloud.redislabs.com';
 
-  private client = createClient({
+  private _port = 14638;
+
+  // Amount of emotes wanted
+  private _numEmotes = 8;
+
+  private _client = createClient({
     socket: {
-      host: this.HOST,
-      port: this.PORT,
+      host: this._host,
+      port: this._port,
     },
-    password: this.PASSWORD,
+    password: this._password,
   });
 
-  constructor() {}
-
-  private async connect() {
-    await this.client.connect();
+  private async _connect() {
+    await this._client.connect();
   }
 
-  private async getEmotes() {
-    const emotes: string[] = [];
-    for (let i = 1; i < 9; ++i) {
-      const emote: string | null = await this.client.get(('emote' + i) as string);
-      if (emote === null) {
-        console.error(('Could not get emote' + i) as string);
-      } else emotes.push(emote);
+  private async _getEmotes() {
+    const emoteKeys: string[] = [];
+    for (let i = 1; i < this._numEmotes + 1; ++i) {
+      const emoteKey: string = 'emote'.concat(i as unknown as string);
+      emoteKeys.push(emoteKey);
     }
-    return emotes;
+    const promises = emoteKeys.map(async emoteKey => this._client.get(emoteKey));
+    return Promise.all(promises);
   }
 
-  public async start(): Promise<string[]> {
-    this.connect();
-    return this.getEmotes();
-    // emotes.forEach((emote) => {
-    //     var image = new Image();
-    //     image.src = 'data:image/png;base64,';
-    // })
+  public async start(): Promise<(string | null)[]> {
+    this._connect();
+    return this._getEmotes();
   }
 }
