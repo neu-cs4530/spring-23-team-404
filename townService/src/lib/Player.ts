@@ -16,9 +16,6 @@ export default class Player {
   /** The ID of the player's currently displayed emote */
   public emote?: Emote;
 
-  /** The pngs of the emotes in string format */
-  public emotes?: string[];
-
   /** The text of the player's current emotional status */
   public status?: string;
 
@@ -45,7 +42,6 @@ export default class Player {
       rotation: 'front',
     };
     this.emote = undefined;
-    this.emotes = undefined;
     this.status = undefined;
     this._userName = userName;
     this._id = nanoid();

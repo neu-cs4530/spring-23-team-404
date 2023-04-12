@@ -88,7 +88,6 @@ export interface PosterSessionArea {
 export interface ServerToClientEvents {
   playerMoved: (movedPlayer: Player) => void;
   playerEmoted: (emotedPlayer: Player) => void;
-  emotesSent: (playerSentTo: Player) => void;
   playerUpdatedStatus: (updatedPlayer: Player) => void;
   playerDisconnect: (disconnectedPlayer: Player) => void;
   playerJoined: (newPlayer: Player) => void;
@@ -100,7 +99,6 @@ export interface ServerToClientEvents {
 }
 
 export interface ClientToServerEvents {
-  loadingSprites: () => void;
   chatMessage: (message: ChatMessage) => void;
   playerMovement: (movementData: PlayerLocation) => void;
   playerEmote: (newEmote: Emote | undefined) => void;

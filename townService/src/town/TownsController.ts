@@ -26,6 +26,7 @@ import {
 } from '../types/CoveyTownSocket';
 import PosterSessionAreaReal from './PosterSessionArea';
 import { isPosterSessionArea } from '../TestUtils';
+import RedisClient from '../lib/Redis';
 
 /**
  * This is the town route
@@ -275,15 +276,13 @@ export class TownsController extends Controller {
 
   @Patch('{townID}/emotes')
   @Response<InvalidParametersError>(400, 'Invalid values specified')
-  public async getInitialEmotes(
-    @Header('X-Session-Token') sessionToken: string,
-  ): Promise<string[]> {
+  public async getInitialEmotes(): Promise<string[]> {
     const client: RedisClient = new RedisClient();
+    console.log('received request');
     return client.start();
     // Promise.resolve(client.start()).then(result => {
     //   return result;
     // });
-
   }
 
   /**

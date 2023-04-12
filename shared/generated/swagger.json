@@ -685,16 +685,7 @@
 					"towns"
 				],
 				"security": [],
-				"parameters": [
-					{
-						"in": "header",
-						"name": "X-Session-Token",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				]
+				"parameters": []
 			}
 		}
 	},

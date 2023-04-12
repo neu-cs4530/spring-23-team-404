@@ -92,7 +92,9 @@ export default class TownGameScene extends Phaser.Scene {
   }
 
   preload() {
-    this.coveyTownController.emitLoadingSprites();
+    Promise.resolve(this.coveyTownController.emitLoadingSprites()).then(sprites => {
+      this.loadSprites(sprites);
+    });
 
     this.load.image(
       'Room_Builder_32x32',
@@ -142,11 +144,13 @@ export default class TownGameScene extends Phaser.Scene {
     );
   }
 
-  loadSprites(updatedPlayer: PlayerController) {
-    const emotes = updatedPlayer.emotes;
+  loadSprites(emotes: string[]) {
     assert(emotes);
     for (let i = 1; i < emotes.length + 1; ++i) {
-      emotes.forEach((emote) => this.textures.addBase64('emote' + i, emote));
+      this.textures.addBase64('emote' + i as string, emotes[i-1]);
+      console.log('hello');
+      console.log(emotes[i-1]);
+      // emotes.forEach((emote) => this.textures.addBase64('emote' + i, emote));
     }
   }
 
@@ -586,7 +590,6 @@ export default class TownGameScene extends Phaser.Scene {
     this.coveyTownController.addListener('playerUpdatedStatus', updatedPlayer =>
       this.updateSprite(updatedPlayer),
     );
-    this.coveyTownController.addListener('emotesSent', updatedPlayer => this.loadSprites(updatedPlayer));
   }
 
   createPlayerSprites(player: PlayerController) {
